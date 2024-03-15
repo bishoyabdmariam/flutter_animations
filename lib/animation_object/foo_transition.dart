@@ -8,11 +8,9 @@ class FooTransition extends StatefulWidget {
 }
 
 class _FooTransitionState extends State<FooTransition>
-    with TickerProviderStateMixin {
-  late Animation<AlignmentGeometry> _greenAnimation;
+    with SingleTickerProviderStateMixin {
   late Animation<AlignmentGeometry> _yellowAnimation;
   late AnimationController _yellowController;
-  late AnimationController _greenController;
 
   @override
   void initState() {
@@ -20,11 +18,6 @@ class _FooTransitionState extends State<FooTransition>
 
     AnimationStatus.reverse;
 
-    _greenController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-      reverseDuration: const Duration(seconds: 1),
-    );
     _yellowController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -33,37 +26,6 @@ class _FooTransitionState extends State<FooTransition>
     _yellowAnimation = Tween<AlignmentGeometry>(
             begin: Alignment.topCenter, end: Alignment.bottomCenter)
         .animate(_yellowController);
-    _greenAnimation = Tween<AlignmentGeometry>(
-            begin: Alignment.centerLeft, end: Alignment.centerRight)
-        .animate(
-      CurvedAnimation(
-        parent: _greenController,
-        curve: Curves.easeInOutBack,
-        reverseCurve: Curves.easeInOutCirc,
-      ),
-    );
-
-    _greenController.addStatusListener((status) {
-      print('_greenController $status');
-      if (status == AnimationStatus.completed||status == AnimationStatus.dismissed) {
-        if (_yellowController.status != AnimationStatus.completed) {
-          _yellowController.forward();
-        } else {
-          _yellowController.reverse();
-        }
-      }
-    });
-
-    _yellowController.addStatusListener((status) {
-      print('_yellowController $status');
-      if (status == AnimationStatus.completed||status == AnimationStatus.dismissed) {
-        if (_greenController.status != AnimationStatus.completed) {
-          _greenController.forward();
-        } else {
-          _greenController.reverse();
-        }
-      }
-    });
   }
 
   @override
@@ -90,12 +52,6 @@ class _FooTransitionState extends State<FooTransition>
       child: Stack(
         children: [
           AlignTransition(
-            alignment: _greenAnimation,
-            child: const CircleAvatar(
-              backgroundColor: Colors.green,
-            ),
-          ),
-          AlignTransition(
             alignment: _yellowAnimation,
             child: const CircleAvatar(
               backgroundColor: Colors.yellow,
@@ -112,10 +68,12 @@ class _FooTransitionState extends State<FooTransition>
       children: [
         ElevatedButton(
           onPressed: () {
-            _greenController.forward();
+            _yellowController.value == 0
+                ? _yellowController.forward()
+                : _yellowController.reverse();
           },
           child: const Text(
-            "forward",
+            "Animate",
           ),
         ),
         const SizedBox(
@@ -123,13 +81,37 @@ class _FooTransitionState extends State<FooTransition>
         ),
         ElevatedButton(
           onPressed: () {
-            _greenController.reverse();
+            _yellowController.addStatusListener(_statusListener);
           },
           child: const Text(
-            "reverse",
+            "Add Status Listener",
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        ElevatedButton(
+          onPressed: () {
+            _yellowController.removeStatusListener(_statusListener);
+          },
+          child: const Text(
+            "Remove Status Listener",
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text(
+            "Add Status Listener",
           ),
         ),
       ],
     );
+  }
+
+  _statusListener(AnimationStatus animationStatus) {
+    print(animationStatus);
   }
 }
