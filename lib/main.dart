@@ -6,6 +6,9 @@ import 'package:flutter_animation/rotation/rotation_animated.dart';
 import 'package:flutter_animation/rotation/rotation_transition.dart';
 import 'package:flutter_animation/tween_animation/screen_one.dart';
 
+import 'opacity/opacity_animated.dart';
+import 'opacity/opacity_transition.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -22,7 +25,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TransitionRotation(),
+      home: const TransitionFade(),
     );
   }
 }
