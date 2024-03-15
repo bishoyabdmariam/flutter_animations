@@ -21,7 +21,7 @@ class _TransitionRotationState extends State<TransitionRotation>
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
-      reverseDuration: Duration(seconds: 1),
+      reverseDuration: const Duration(seconds: 1),
     );
     turns = Tween<double>(begin: 0, end: 1).animate(animationController);
   }
